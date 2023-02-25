@@ -21,14 +21,8 @@
 
 * установить программы для работы
 
-    1. [youtube-dl](https://www.youtube-dl.org/) - кроссплатформенный свободный проект с открытым исходным кодом на
-       Python - для работы с видео ютуба. Для ознакомления можно прочитать [статью](https://habr.com/ru/post/369853/).
-
-       Для установки на Ubuntu:
-
-       ```bash
-       sudo -H pip3 install --upgrade youtube-dl
-       ```
+    1. в папке plugins_bot/yotube2mp3 находится *yt-dlp_linux* - скачивает и конвертирует ютуб видео в mp3, 
+для установки новой версии можете скачать [здесь](https://github.com/yt-dlp/yt-dlp/releases)
 
     2. [mp3splt](http://mp3splt.sourceforge.net/mp3splt_page/home.php) - для разбивания аудофайлов различных форматов
        без декодинга.
@@ -44,7 +38,7 @@
 #### 1. How to download an MP3 track from a YouTube video
 
 ```bash
-youtube-dl --extract-audio --audio-format mp3 <video URL>
+yt-dlp_linux --extract-audio --audio-format mp3 <video URL>
 ```
 
 #### 2. Разбить аудиофайл на части продолжительностью 60 минут:

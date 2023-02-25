@@ -9,6 +9,7 @@ Youtube video to mp3 file.
 import asyncio
 from telethon import events
 import re
+import os
 
 from tlgbotcore.i_utils import run_cmd
 
@@ -47,7 +48,8 @@ async def get_mp3_from_youtube(event):
 
     await event.respond("Начало конвертации ютуб клипа в mp3...")
     # print("get_mp3_from_youtube start subprocess begin")
-    cmds = f'youtube-dl --extract-audio --audio-format mp3 ' \
+    cmd_yt_dlp = os.path.join(os.path.dirname(__file__), "yt-dlp_linux")
+    cmds = f'{cmd_yt_dlp} --extract-audio --audio-format mp3 ' \
            f'--output "{path_mp3}/{user_folder}/%(title)s.%(ext)s" {url_youtube}'
     # print(cmds)
 
@@ -65,19 +67,30 @@ async def get_mp3_from_youtube(event):
 
     result = result.decode("utf-8")
     str_result = result.split("\n")
-    str_search = "[ffmpeg] Destination:"
+    str_search = "[ExtractAudio] Destination:"
     file_mp3 = ""
     for s in str_result:
         if str_search in s:
             file_mp3 = s[len(str_search):].strip()
             break
 
+    # если уже был сконвертирован mp3 файл
+    if file_mp3 == "":
+        str_search = "[ExtractAudio] Not converting audio"
+        print("str_search = ", str_search)
+        file_mp3 = ""
+        for s in str_result:
+            if str_search in s:
+                file_mp3 = s[len(str_search):].strip()
+                break
+        file_mp3 = file_mp3.split(";")[0]
+
     await event.respond("mp3 файл скачан...будем делить на части")
     # деление mp3 файла на части, если нужно с помощью команды mp3splt
     timesplit = "59.0"  # длительность каждой части формат: минуты.секунда
     cmds2 = f'mp3splt -t {timesplit} "{file_mp3}"'
 
-    # print(cmds)
+    # print(cmds2)
 
     done2, _ = await asyncio.wait([
         run_cmd(cmds2)
